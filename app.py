@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSERACT_CMD', '/usr/bin/tesseract')
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
@@ -171,5 +171,6 @@ def get_status():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
