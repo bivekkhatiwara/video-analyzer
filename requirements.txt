@@ -1,7 +1,5 @@
 Flask
 opencv-python
 pytesseract
-pytesseract
 numpy
-
 gunicorn

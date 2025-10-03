@@ -7,10 +7,7 @@ import os
 
 app = Flask(__name__)
 
-# IMPORTANT FIX: Removed the hardcoded Windows path for tesseract.
-# On Linux servers (like Render), pytesseract finds the executable
-# automatically if it's installed as a system package (via Aptfile or Dockerfile).
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe" 
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
@@ -26,15 +23,6 @@ def extract_text_from_video(video_path, frame_interval=30):
     global processing_status
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        # Added Tesseract check for better debugging in the future
-        try:
-            # Simple check to see if tesseract is callable
-            pytesseract.get_tesseract_version()
-        except pytesseract.TesseractNotFoundError:
-             # Provide a more specific error if Tesseract is missing
-             raise IOError("Tesseract executable not found. Check Aptfile/Dockerfile installation.")
-        
-        # If tesseract is found, then the video file is the issue
         raise IOError("Could not open video file.")
 
     frame_count = 0
@@ -49,7 +37,6 @@ def extract_text_from_video(video_path, frame_interval=30):
 
         if frame_count % frame_interval == 0:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # This will now use the system-installed Tesseract
             text = pytesseract.image_to_string(gray)
             if text.strip():
                 extracted_texts.append(text.strip())
@@ -137,12 +124,10 @@ heuristics = [
 
 @app.route('/')
 def serve_index():
-    # Assuming 'templates/index.html' exists for the web front-end
     return send_from_directory('templates', 'index.html')
 
 @app.route('/ai')
 def ai():
-    # Assuming 'templates/ai.html' exists
     return render_template("ai.html")
 
 @app.route('/analyze', methods=['POST'])
@@ -175,11 +160,7 @@ def analyze_video():
             return jsonify(report)
         
         except IOError as e:
-            # Return specific Tesseract error if detected during runtime check
             return jsonify({"error": str(e)}), 500
-        except pytesseract.TesseractNotFoundError:
-            # Catch the Tesseract error specifically if it happens during image_to_string
-            return jsonify({"error": "Tesseract is not in the system's PATH. Please check the Aptfile or Dockerfile dependencies."}), 500
         finally:
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -189,6 +170,4 @@ def get_status():
     return jsonify(processing_status)
 
 if __name__ == '__main__':
-    # Use the port specified by the environment, or 5000 for local development
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True)
