@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI/UX Heuristic Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* Custom button bubble effect */
+        .bubble-btn {
+            background-image: linear-gradient(to right, #4c51bf 0%, #6366f1 51%, #4c51bf 100%);
+            transition: all 0.3s ease-in-out;
+            background-size: 200% auto;
+        }
+        .bubble-btn:hover {
+            background-position: right center;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5), 0 4px 6px -2px rgba(99, 102, 241, 0.25);
+        }
+        .bubble-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Custom spinner for loading state */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #1f2937;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Pulsing animation for status text */
+        .status-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Custom fade-in animation for page load */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-on-load {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .fade-in-delay-1 {
+            animation-delay: 0.2s;
+        }
+
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col items-center p-4">
+
+    <!-- Navigation Bar -->
+    <header class="w-full max-w-7xl mx-auto py-4 md:py-6 px-6 md:px-12 flex justify-between items-center mb-8 rounded-full bg-white bg-opacity-80 backdrop-blur-sm shadow-lg fade-in-on-load">
+        <a href="index.html" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500 transition-colors duration-300 hover:scale-105">
+            UI/UX Analyzer
+        </a>
+        <nav>
+            <ul class="flex space-x-2 md:space-x-4">
+                <li>
+                    <a href="index.html" id="home-link" class="flex items-center text-base font-medium text-slate-700 p-2 rounded-full transition-colors duration-200 transform hover:text-indigo-600 hover:bg-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-1.5">
+                            <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                            <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.21a2.25 2.25 0 01-2.25 2.25H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.197a2.25 2.25 0 01-2.25-2.25v-6.21a2.25 2.25 0 00-.091-.086L12 5.432z" />
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/ai" class="flex items-center text-base font-medium text-slate-700 p-2 rounded-full transition-colors duration-200 transform hover:text-indigo-600 hover:bg-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-1.5">
+                            <path fill-rule="evenodd" d="M11.54 22.351A2.433 2.433 0 0014.195 21h2.723a2.57 2.57 0 002.34-1.637l1.087-3.626c.219-.729-.356-1.533-1.144-1.533H9.866c-.788 0-1.363.804-1.144 1.533l1.087 3.626a2.57 2.57 0 002.34 1.637h2.723a2.433 2.433 0 002.655-1.149c-.66.398-1.428.625-2.235.625-1.566 0-2.834-1.268-2.834-2.834s1.268-2.834 2.834-2.834 2.834 1.268 2.834 2.834c0 .807-.227 1.575-.625 2.235zM5.794 19.167A2.433 2.433 0 008.385 21h2.723a2.57 2.57 0 002.34-1.637l1.087-3.626c.219-.729-.356-1.533-1.144-1.533H3.656c-.788 0-1.363.804-1.144 1.533l1.087 3.626a2.57 2.57 0 002.34 1.637h2.723a2.433 2.433 0 002.655-1.149c-.66.398-1.428.625-2.235.625-1.566 0-2.834-1.268-2.834-2.834s1.268-2.834 2.834-2.834 2.834 1.268 2.834 2.834c0 .807-.227 1.575-.625 2.235zM12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12 18.75c-3.712 0-6.75-3.038-6.75-6.75s3.038-6.75 6.75-6.75 6.75 3.038 6.75 6.75-3.038 6.75-6.75 6.75z" clip-rule="evenodd" />
+                        </svg>
+                        AI
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center text-base font-medium text-slate-700 p-2 rounded-full transition-colors duration-200 transform hover:text-indigo-600 hover:bg-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-1.5">
+                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75S17.385 21.75 12 21.75 2.25 17.385 2.25 12zm8.718-2.28a.75.75 0 00-1.06 0l-3.75 3.75a.75.75 0 001.06 1.06l3.22-3.22V15a.75.75 0 001.5 0V10.81l3.22 3.22a.75.75 0 101.06-1.06l-3.75-3.75a.75.75 0 00-.53-.22z" clip-rule="evenodd" />
+                        </svg>
+                        Help
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-xl flex flex-col gap-8 fade-in-on-load fade-in-delay-1">
+        <!-- Header Section -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+                UI/UX Heuristic Analyzer
+            </h1>
+            <p class="text-slate-500 text-base md:text-lg">Upload a video to get a heuristic evaluation report.</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div id="upload-section" class="flex flex-col items-center gap-6 p-6 md:p-8 rounded-xl border-2 border-dashed border-slate-300 transition-colors duration-300 hover:border-indigo-400 transform hover:scale-[1.01]">
+            <label for="video-input" class="cursor-pointer flex flex-col items-center space-y-2 text-center text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 text-teal-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="text-xl font-medium text-slate-800">Drag & drop your video here, or click to browse</span>
+                <span class="text-sm">Supported formats: MP4, AVI, MOV, MKV</span>
+            </label>
+            <input type="file" id="video-input" accept=".mp4, .avi, .mov, .mkv" class="hidden">
+            <button id="analyze-btn" class="w-full md:w-auto px-8 py-3 text-white font-semibold rounded-full shadow-lg transition-colors duration-300 transform scale-100 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed bubble-btn" disabled>
+                Analyze Video
+            </button>
+        </div>
+        
+        <!-- Status & Loading Indicator -->
+        <div id="status-message" class="text-center text-sm font-medium text-slate-500 hidden">
+            <p class="status-pulse">Processing video frames...</p>
+            <p id="frame-count-display" class="mt-2 text-base text-indigo-600 font-bold">Frames Processed: 0</p>
+            <div class="mt-4 flex justify-center">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Report Section -->
+        <div id="report-section" class="hidden">
+            <div class="bg-slate-50 p-6 md:p-8 rounded-2xl shadow-inner space-y-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-teal-600">Heuristic Evaluation Report</h2>
+                
+                <div id="report-stats" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+                    <!-- Stats like Time and Frame Count go here -->
+                </div>
+
+                <!-- Report Toggle and Content -->
+                <div class="space-y-4">
+                    <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
+                        <h3 class="text-xl font-semibold text-slate-800">Evaluation Results:</h3>
+                        <button id="toggle-report-btn" class="px-5 py-2 text-sm text-white font-semibold rounded-full shadow-md bubble-btn transform hover:scale-[1.03] transition-transform">
+                            Show Unmet Heuristics
+                        </button>
+                    </div>
+                    <div id="report-content" class="space-y-4">
+                        <!-- Report items dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Extracted Text Section -->
+                <div class="border-t pt-6 mt-6 border-slate-200">
+                    <button id="toggle-text-btn" class="px-5 py-2 text-sm text-white font-semibold rounded-full shadow-md bubble-btn transform hover:scale-[1.03] transition-transform">
+                        Show Extracted Text
+                    </button>
+                    <!-- This container is initially hidden -->
+                    <div id="extracted-text-content" class="mt-4 p-4 bg-white border border-slate-300 rounded-lg shadow-sm hidden">
+                        <p class="text-xs font-medium text-slate-500 mb-2">RAW OCR TEXT:</p>
+                        <pre id="extracted-text-area" class="whitespace-pre-wrap text-sm text-slate-800 break-words font-mono bg-slate-50 p-3 rounded"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Past History Section - MOVED TO THE END -->
+        <div id="history-section" class="p-6 md:p-8 rounded-xl border-2 border-slate-200 bg-white shadow-md hidden">
+            <h2 class="text-xl font-bold text-slate-700 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-indigo-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Recent Analysis History (Max 3)
+            </h2>
+            <div id="history-list" class="space-y-3">
+                <!-- History items will be dynamically inserted here -->
+                <p id="no-history-message" class="text-slate-500 italic text-sm">No analysis history found. Upload a video to save your first report!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box for Alerts (replaces alert() and confirm()) -->
+    <div id="message-box" class="fixed inset-0 bg-slate-900 bg-opacity-70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl text-center space-y-4 max-w-sm w-full">
+            <p id="message-text" class="text-slate-800 text-lg"></p>
+            <button id="close-message-btn" class="px-6 py-2 bubble-btn text-white font-semibold rounded-full transition-colors duration-300">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const videoInput = document.getElementById('video-input');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const statusMessage = document.getElementById('status-message');
+        const reportSection = document.getElementById('report-section');
+        const reportStats = document.getElementById('report-stats');
+        const reportContent = document.getElementById('report-content');
+        const toggleReportBtn = document.getElementById('toggle-report-btn');
+        const extractedTextArea = document.getElementById('extracted-text-area');
+        const extractedTextContent = document.getElementById('extracted-text-content');
+        const toggleTextBtn = document.getElementById('toggle-text-btn');
+        const frameCountDisplay = document.getElementById('frame-count-display');
+        const uploadSection = document.getElementById('upload-section');
+        const historySection = document.getElementById('history-section'); // New selector
+        const historyList = document.getElementById('history-list');
+        const noHistoryMessage = document.getElementById('no-history-message');
+        const homeLink = document.getElementById('home-link'); // Selector for the Home link
+
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const closeMessageBtn = document.getElementById('close-message-btn');
+        
+        let reportDataCache = null;
+        let pollingInterval = null;
+        let isFullReportView = true; // Set to true by default
+
+        // --- History Management ---
+        const HISTORY_KEY = 'analysisHistory';
+        const MAX_HISTORY = 3;
+
+        function saveAnalysisToHistory(reportData, filename) {
+            const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            
+            // Create a concise summary of the report to save
+            const summary = {
+                filename: filename,
+                timestamp: new Date().toLocaleString(),
+                fullReport: reportData, // Store full data for later viewing
+                time: reportData["Processing Time"],
+                frames: reportData.total_frames,
+                // Count how many heuristics were met/unmet
+                metCount: Object.values(reportData).filter(r => Array.isArray(r) && r[0] === true).length,
+                unmetCount: Object.values(reportData).filter(r => Array.isArray(r) && r[0] === false).length,
+            };
+
+            // Add new summary to the start and limit size
+            history.unshift(summary);
+            history.splice(MAX_HISTORY); 
+            
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            loadHistory(); // Reload the history section
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            historyList.innerHTML = '';
+
+            if (history.length === 0) {
+                historyList.appendChild(noHistoryMessage);
+                noHistoryMessage.classList.remove('hidden');
+                return;
+            }
+            noHistoryMessage.classList.add('hidden');
+
+            history.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'flex flex-col md:flex-row justify-between items-start md:items-center p-3 bg-slate-50 rounded-lg border border-slate-200 shadow-sm';
+                
+                historyItem.innerHTML = `
+                    <div class="flex-1 min-w-0 mb-2 md:mb-0">
+                        <p class="font-semibold text-indigo-600 truncate">${item.filename}</p>
+                        <p class="text-xs text-slate-500">${item.timestamp}</p>
+                        <p class="text-xs text-slate-500 mt-1">
+                            ✅ Met: <span class="font-bold text-green-600">${item.metCount}</span> /
+                            ⚠️ Unmet: <span class="font-bold text-red-600">${item.unmetCount}</span>
+                        </p>
+                    </div>
+                    <button data-index="${index}" class="view-history-btn px-4 py-2 text-sm text-white font-semibold rounded-full shadow-md transition-transform bubble-btn">
+                        View Report
+                    </button>
+                `;
+                historyList.appendChild(historyItem);
+            });
+
+            // Attach event listeners to new view buttons
+            document.querySelectorAll('.view-history-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const index = e.target.getAttribute('data-index');
+                    const selectedItem = history[index];
+                    
+                    // Show report section and display the report
+                    reportSection.classList.remove('hidden');
+                    uploadSection.classList.add('hidden');
+                    statusMessage.classList.add('hidden');
+                    historySection.classList.add('hidden'); // Hide history when viewing report
+                    
+                    displayReport(selectedItem.fullReport);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        }
+        
+        // Function to show custom message box
+        function showMessage(text) {
+            messageText.textContent = text;
+            messageBox.classList.remove('hidden');
+        }
+
+        // --- File Handling and UI Updates ---
+        
+        // Handle file drop on the upload section
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('border-indigo-500', 'scale-[1.01]');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('border-indigo-500', 'scale-[1.01]');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('border-indigo-500', 'scale-[1.01]');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                videoInput.files = files;
+                updateButtonState();
+            }
+        });
+
+        // Handle file selection from input click
+        videoInput.addEventListener('change', updateButtonState);
+        
+        function updateButtonState() {
+            if (videoInput.files.length > 0) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = `Analyze Video (${videoInput.files[0].name})`;
+            } else {
+                analyzeBtn.disabled = true;
+                analyzeBtn.textContent = 'Analyze Video';
+            }
+        }
+
+        // --- Real-time Status Polling ---
+        async function startPolling() {
+            frameCountDisplay.textContent = 'Frames Processed: 0';
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/status');
+                    const data = await response.json();
+                    
+                    if (data.is_processing) {
+                        frameCountDisplay.textContent = `Frames Processed: ${data.current_frame}`;
+                    } else {
+                        // Polling will be stopped by the analyzeBtn click success handler
+                    }
+                } catch (error) {
+                    console.error("Polling failed:", error);
+                    clearInterval(pollingInterval);
+                }
+            }, 1000); // Poll every 1 second
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+
+        // --- Analysis Logic ---
+        analyzeBtn.addEventListener('click', async () => {
+            const videoFile = videoInput.files[0];
+            if (!videoFile) {
+                showMessage("Please select a video file first.");
+                return;
+            }
+
+            // Hide upload, report, and history sections, show loading
+            uploadSection.classList.add('hidden');
+            reportSection.classList.add('hidden');
+            historySection.classList.add('hidden'); 
+            statusMessage.classList.remove('hidden');
+            
+            startPolling();
+
+            const formData = new FormData();
+            formData.append('video', videoFile);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                stopPolling();
+
+                if (!response.ok) {
+                    // CRITICAL FIX: Ensure we handle non-JSON error responses gracefully
+                    const text = await response.text();
+                    try {
+                        const errorData = JSON.parse(text);
+                        throw new Error(errorData.error || 'Server error occurred.');
+                    } catch (e) {
+                        // If parsing as JSON failed, assume the text is the error message
+                        if (text.trim().length > 0) {
+                             throw new Error(`Server returned error: ${text}`);
+                        } else {
+                            throw new Error(`Server error occurred with status: ${response.status}`);
+                        }
+                    }
+                }
+
+                reportDataCache = await response.json();
+                
+                // Save to history before displaying
+                saveAnalysisToHistory(reportDataCache, videoFile.name);
+
+                // Display the report
+                displayReport(reportDataCache);
+
+                // Hide status, show report AND history
+                statusMessage.classList.add('hidden');
+                reportSection.classList.remove('hidden');
+                historySection.classList.remove('hidden'); // Show history after success
+
+            } catch (error) {
+                console.error("Analysis failed:", error);
+                showMessage(`Analysis failed: ${error.message}`);
+                // Revert to upload state on failure (show history if loaded)
+                stopPolling();
+                statusMessage.classList.add('hidden');
+                uploadSection.classList.remove('hidden');
+                historySection.classList.remove('hidden'); // Show history on failure too
+            }
+        });
+
+        // --- Report Rendering ---
+
+        function renderHeuristicItem(name, result, isMet, prevention) {
+            const statusClass = isMet ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-amber-500 bg-amber-50';
+            const statusIcon = isMet ? 'text-green-600' : 'text-amber-600';
+            
+            let preventionHtml = '';
+            if (!isMet && prevention) {
+                preventionHtml = `
+                    <div class="mt-3 p-3 bg-white rounded-md border border-amber-200">
+                        <p class="font-bold text-sm text-red-600">Prevention Tip:</p>
+                        <p class="text-sm text-slate-700">${prevention}</p>
+                    </div>
+                `;
+            }
+
+            const reportItem = document.createElement('div');
+            reportItem.className = `p-4 rounded-lg shadow-sm transition-all duration-300 ${statusClass} heuristic-item`;
+            reportItem.setAttribute('data-is-met', isMet);
+            reportItem.innerHTML = `
+                <h3 class="font-semibold text-lg flex items-center ${statusIcon}">
+                    <span class="mr-2">${isMet ? '✅' : '⚠️'}</span>
+                    ${name}
+                </h3>
+                <p class="mt-1 text-base text-slate-700">${result}</p>
+                ${preventionHtml}
+            `;
+            return reportItem;
+        }
+
+        function renderAllHeuristics() {
+            reportContent.innerHTML = '';
+            let index = 1;
+            // FIX: Check if reportDataCache is valid before iterating
+            if (!reportDataCache || typeof reportDataCache !== 'object') {
+                reportContent.innerHTML = `<p class="text-center p-8 text-lg font-medium text-red-600 bg-red-100 rounded-lg shadow-inner">Error: Invalid report data received.</p>`;
+                return;
+            }
+
+            for (const [name, result] of Object.entries(reportDataCache)) {
+                if (name !== "Processing Time" && name !== "total_frames" && name !== "extracted_text") {
+                    // FIX: Ensure result is an array/tuple before destructuring
+                    const [isMet, message, prevention] = Array.isArray(result) ? result : [false, "Error: Invalid heuristic format.", "Check server logs for details."];
+                    const item = renderHeuristicItem(`${index}. ${name}`, message, isMet, prevention);
+                    reportContent.appendChild(item);
+                    index++;
+                }
+            }
+        }
+
+        function renderUnmetHeuristics() {
+            reportContent.innerHTML = '';
+            let index = 1;
+            let unmetCount = 0;
+            // FIX: Check if reportDataCache is valid before iterating
+            if (!reportDataCache || typeof reportDataCache !== 'object') {
+                reportContent.innerHTML = `<p class="text-center p-8 text-lg font-medium text-red-600 bg-red-100 rounded-lg shadow-inner">Error: Invalid report data received.</p>`;
+                return;
+            }
+            
+            for (const [name, result] of Object.entries(reportDataCache)) {
+                if (name !== "Processing Time" && name !== "total_frames" && name !== "extracted_text") {
+                    // FIX: Ensure result is an array/tuple before destructuring
+                    const [isMet, message, prevention] = Array.isArray(result) ? result : [false, "Error: Invalid heuristic format.", "Check server logs for details."];
+                    
+                    if (!isMet) {
+                        const item = renderHeuristicItem(`${index}. ${name}`, message, isMet, prevention);
+                        reportContent.appendChild(item);
+                        unmetCount++;
+                    }
+                    index++;
+                }
+            }
+            if (unmetCount === 0) {
+                 reportContent.innerHTML = `<p class="text-center p-8 text-lg font-medium text-green-600 bg-green-100 rounded-lg shadow-inner">🎉 All 10 heuristics were met! Excellent design!</p>`;
+            }
+        }
+
+        function displayReport(reportData) {
+            reportDataCache = reportData; // Store the full report data
+            
+            // Validate essential properties before proceeding
+            if (typeof reportData !== 'object' || reportData.total_frames === undefined) {
+                 showMessage("Error: Received malformed report data from server.");
+                 console.error("Malformed report data:", reportData);
+                 return;
+            }
+
+            // 1. Display Stats
+            reportStats.innerHTML = `
+                <p class="font-medium text-slate-700 p-2 bg-white rounded-lg shadow-md">
+                    <span class="font-bold text-indigo-600">Total Frames Analyzed:</span> ${reportData.total_frames}
+                </p>
+                <p class="font-medium text-slate-700 p-2 bg-white rounded-lg shadow-md">
+                    <span class="font-bold text-indigo-600">OCR Processing Time:</span> ${reportData["Processing Time"]}
+                </p>
+            `;
+
+            // 2. Set Extracted Text Content
+            extractedTextArea.textContent = reportData.extracted_text || "No text extracted.";
+            // Reset extracted text view to hidden
+            extractedTextContent.classList.add('hidden');
+            toggleTextBtn.textContent = 'Show Extracted Text';
+            
+            // 3. Display Heuristics (Default to Full View)
+            isFullReportView = true;
+            toggleReportBtn.textContent = 'Show Unmet Heuristics';
+            renderAllHeuristics(); 
+        }
+
+        // --- Event Listeners for Report Toggles ---
+        
+        toggleReportBtn.addEventListener('click', () => {
+            if (!reportDataCache) return; // Prevent action if no report is loaded
+            isFullReportView = !isFullReportView;
+            if (isFullReportView) {
+                renderAllHeuristics();
+                toggleReportBtn.textContent = 'Show Unmet Heuristics';
+            } else {
+                renderUnmetHeuristics();
+                toggleReportBtn.textContent = 'Show Full Report';
+            }
+        });
+
+        // New listener for extracted text toggle
+        toggleTextBtn.addEventListener('click', () => {
+            const isHidden = extractedTextContent.classList.toggle('hidden');
+            toggleTextBtn.textContent = isHidden ? 'Show Extracted Text' : 'Hide Extracted Text';
+        });
+
+        // Close message box event
+        closeMessageBtn.addEventListener('click', () => {
+            messageBox.classList.add('hidden');
+        });
+
+        // Home link click handler
+        homeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Reset the UI state to show the upload form
+            uploadSection.classList.remove('hidden');
+            reportSection.classList.add('hidden');
+            statusMessage.classList.add('hidden');
+            historySection.classList.remove('hidden'); // Show history on home
+            videoInput.value = ''; // Clear file input
+            updateButtonState();
+            // Scroll to the top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Initialize on load
+        window.onload = function() {
+            loadHistory();
+            updateButtonState();
+            // Ensure history is visible on initial load
+            historySection.classList.remove('hidden');
+        };
+
+    </script>
+</body>
+</html>

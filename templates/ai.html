@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX Heuristic Analyzer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bubble-btn {
+      background-image: linear-gradient(to right, #4c51bf 0%, #6366f1 51%, #4c51bf 100%);
+      transition: all 0.3s ease-in-out;
+      background-size: 200% auto;
+    }
+
+    .bubble-btn:hover {
+      background-position: right center;
+      box-shadow: 0 10px 25px -3px rgba(99, 102, 241, 0.6);
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .bubble-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Smooth fade-in animation */
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.9s ease forwards;
+    }
+
+    /* Floating animation for card */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-200 text-slate-900 min-h-screen flex flex-col items-center p-4">
+
+  <!-- Navigation Bar -->
+  <header
+    class="w-full max-w-7xl mx-auto py-4 md:py-6 px-6 md:px-12 flex justify-between items-center mb-8 rounded-full bg-white bg-opacity-70 backdrop-blur-lg shadow-lg fade-up">
+    <a href="#" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500 transition duration-300 hover:scale-105">
+      UI/UX Analyzer
+    </a>
+    <nav>
+      <ul class="flex space-x-2 md:space-x-4">
+        <li>
+          <a href="/"
+            class="flex items-center text-base font-medium text-slate-700 p-2 rounded-full transition duration-200 hover:text-indigo-600 hover:bg-slate-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+              viewBox="0 0 24 24" class="w-5 h-5 mr-1.5">
+              <path
+                d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+              <path
+                d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.21a2.25 2.25 0 01-2.25 2.25H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.197a2.25 2.25 0 01-2.25-2.25v-6.21a2.25 2.25 0 00-.091-.086L12 5.432z" />
+            </svg>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="index.html"
+            class="flex items-center text-base font-medium text-slate-700 p-2 rounded-full transition duration-200 hover:text-indigo-600 hover:bg-slate-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+              viewBox="0 0 24 24" class="w-5 h-5 mr-1.5">
+              <path fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75S17.385 21.75 12 21.75 2.25 17.385 2.25 12zm8.718-2.28a.75.75 0 00-1.06 0l-3.75 3.75a.75.75 0 001.06 1.06l3.22-3.22V15a.75.75 0 001.5 0V10.81l3.22 3.22a.75.75 0 101.06-1.06l-3.75-3.75a.75.75 0 00-.53-.22z"
+                clip-rule="evenodd" />
+            </svg>
+            Help
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- AI Assistant Section -->
+  <div class="w-full max-w-5xl bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-6 md:p-10 mb-12 fade-up floating">
+    <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4 text-center">Meet Your AI Assistant</h1>
+    <p class="text-slate-600 mb-6 text-center">Get instant insights about UI/UX heuristics and design principles.</p>
+
+    <!-- Chatbot Frame -->
+    <div class="rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+      <iframe
+        src="https://www.chatbase.co/chatbot-iframe/WLNLjJvGzjyAzv2LIt2Qo"
+        width="100%"
+        style="height: 700px"
+        frameborder="0"
+        class="rounded-2xl"
+      ></iframe>
+    </div>
+  </div>
+
+
+  
+
+</body>
+</html>
