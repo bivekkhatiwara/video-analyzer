@@ -1,1 +1,8 @@
-[Immersive content redacted for brevity.]
+System dependencies for Tesseract OCR and OpenCV
+tesseract-ocr
+tesseract-ocr-eng
+libglib2.0-0
+libsm6
+libxext6
+libxrender1
+libfontconfig1
