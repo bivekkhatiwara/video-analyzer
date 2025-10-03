@@ -5,10 +5,13 @@ FROM python:3.11-slim
 # Dockerfile (FIXED RUN command)
 # Dockerfile (The corrected RUN instruction)
 # 2. Set the OS dependencies (Tesseract, OpenCV support, and shared libs)
+# Dockerfile (Modified RUN command)
+# Add libgl1 to provide libGL.so.1 for OpenCV
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     tesseract-ocr tesseract-ocr-eng libglib2.0-0 libsm6 libxext6 \
-    libxrender1 libfontconfig1 libsuitesparse-dev && \
+    libxrender1 libfontconfig1 libsuitesparse-dev \
+    libgl1 && \
     rm -rf /var/lib/apt/lists/*
 
 # 3. Set the working directory
