@@ -1,7 +1,7 @@
-# Start from an official Python image
+# 1. Choose a stable, small base image (Debian-based for apt)
 FROM python:3.11-slim
 
-# Install system dependencies (Tesseract, OpenCV support libraries)
+# 2. Set the OS dependencies (Tesseract, OpenCV support, and shared libs)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     tesseract-ocr \
@@ -13,22 +13,24 @@ RUN apt-get update && \
     libfontconfig1 \
     libatlas-base-dev \
     libsuitesparse-dev && \
-    # Clean up to keep the image small
+    # Clean up to keep the image size minimal
     rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
+# 3. Set the working directory
 WORKDIR /usr/src/app
 
-# Copy the Python dependencies and install them
+# 4. Copy and install Python dependencies
+# Use COPY . . if requirements.txt is not at the root
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code
+# 5. Copy the rest of the application code
 COPY . .
 
-# Set the environment variable for Tesseract path for PyTesseract 
-# (Tesseract is installed here: /usr/bin/tesseract)
+# 6. Set the Tesseract executable path as an Environment Variable
+# This ensures pytesseract knows where to find the installed binary.
 ENV TESSERACT_CMD="/usr/bin/tesseract"
 
-# Set the command to run the application (using Procfile logic)
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
+# 7. Define the command to start your Flask app using Gunicorn
+# This is equivalent to your Procfile line
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
