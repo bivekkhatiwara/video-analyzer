@@ -2,6 +2,7 @@
 FROM python:3.11-slim
 
 # 2. Set the OS dependencies (Tesseract, OpenCV support, and shared libs)
+# Dockerfile (FIXED RUN command)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     tesseract-ocr \
@@ -11,8 +12,8 @@ RUN apt-get update && \
     libxext6 \
     libxrender1 \
     libfontconfig1 \
-    libatlas-base-dev \
     libsuitesparse-dev && \
+    rm -rf /var/lib/apt/lists/*
     # Clean up to keep the image size minimal
     rm -rf /var/lib/apt/lists/*
 
