@@ -1,1 +1,26 @@
-[Immersive content redacted for brevity.]
+Python dependencies
+pycache
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+Editor/OS artifacts
+.git
+.gitignore
+.idea
+.vscode
+.DS_Store
+
+Uploads directory used by the app
+uploads/
+
+Local data (if applicable)
+*.sqlite3
+data/
+media/
