@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
@@ -171,3 +171,4 @@ def get_status():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
